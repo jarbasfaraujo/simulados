@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1º SIMULADO PC-ES - OFICIAL INVESTIGADOR (PÓS-EDITAL)</title>
+    <style>
+        :root {
+            --primary: #003366; /* Azul Polícia */
+            --secondary: #f4f4f9;
+            --accent: #FFD700; /* Dourado */
+            --success: #28a745;
+            --error: #dc3545;
+            --text: #212529;
+        }
+
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: var(--secondary); color: var(--text); margin: 0; padding: 20px; line-height: 1.6; }
+        
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        header { text-align: center; border-bottom: 3px solid var(--primary); padding-bottom: 20px; margin-bottom: 30px; }
+        header h1 { color: var(--primary); font-size: 1.8rem; margin: 0; text-transform: uppercase; }
+        header h2 { font-size: 1.2rem; color: #555; margin-top: 5px; }
+
+        .discipline-header { background: var(--primary); color: white; padding: 12px 20px; font-size: 1.2rem; font-weight: bold; text-transform: uppercase; margin-top: 40px; border-radius: 4px; }
+
+        .question-card { margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+        .question-text { font-weight: 600; font-size: 1.05rem; margin-bottom: 15px; white-space: pre-line; }
+        
+        .options { list-style: none; padding: 0; }
+        .option-label { display: flex; align-items: flex-start; padding: 10px; margin-bottom: 5px; cursor: pointer; border-radius: 4px; border: 1px solid transparent; transition: background 0.2s; }
+        .option-label:hover { background-color: #e9ecef; }
+        .option-label input { margin-right: 12px; margin-top: 6px; flex-shrink: 0; }
+        
+        /* Feedback Styles */
+        .feedback { display: none; margin-top: 15px; padding: 15px; border-radius: 5px; background-color: #f8f9fa; border-left: 5px solid #ccc; font-size: 0.95rem; }
+        .feedback.correct { border-left-color: var(--success); background-color: #d4edda; color: #155724; }
+        .feedback.incorrect { border-left-color: var(--error); background-color: #f8d7da; color: #721c24; }
+
+        .correct-highlight { background-color: #d4edda !important; border: 1px solid var(--success) !important; font-weight: bold; color: #155724; }
+        .wrong-highlight { background-color: #f8d7da !important; border: 1px solid var(--error) !important; color: #721c24; }
+
+        /* Actions */
+        .btn-submit { display: block; width: 100%; padding: 15px; background: var(--primary); color: white; border: none; font-size: 1.2rem; font-weight: bold; text-transform: uppercase; cursor: pointer; border-radius: 5px; margin-top: 30px; transition: background 0.3s; }
+        .btn-submit:hover { background: #002244; }
+
+        /* Results */
+        #results-panel { display: none; margin-top: 30px; text-align: center; }
+        .score-box { font-size: 2.5rem; font-weight: bold; color: var(--primary); margin: 20px 0; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; text-align: left; margin-top: 20px; }
+        .stat-card { background: #f8f9fa; padding: 15px; border-radius: 5px; border: 1px solid #ddd; }
+        
+        /* Utility for math */
+        .math { font-family: "Courier New", monospace; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>1º SIMULADO POLÍCIA CIVIL DO ESPÍRITO SANTO</h1>
+        <h2>Oficial Investigador (Pós-Edital) - Banca IBADE</h2>
+    </header>
+
+    <div id="quiz-container">
+        </div>
+
+    <button class="btn-submit" onclick="gradeQuiz()">Corrigir Simulado</button>
+
+    <div id="results-panel">
+        <h2>Resultado Final</h2>
+        <div class="score-box" id="final-score"></div>
+        <div class="stats-grid" id="discipline-stats"></div>
+    </div>
+</div>
+
+<script>
+    /* BANCO DE QUESTÕES COMPLETO (Texto Literal do PDF) */
+    const db = [
+        // --- LÍNGUA PORTUGUESA ---
+        {
+            id: 1, disc: "Língua Portuguesa",
+            q: 'Leia o trecho:\n"Generalizando-se a corrupção, restabelece-se a Justiça."\nO trecho transmite, principalmente, a ideia de:',
+            ops: [
+                "(A) defesa de que a corrupção pode funcionar como um mecanismo de equilíbrio social ao atingir todos de forma igual.",
+                "(B) ironia diante de uma sociedade em que a corrupção se torna tão comum que a justiça se dissolve.",
+                "(C) reflexão moral sobre a relativização dos valores éticos em contextos de desigualdade social.",
+                "(D) denúncia de que a impunidade corrói a confiança pública e enfraquece o poder das leis.",
+                "(E) provocação filosófica que sugere ser impossível alcançar justiça verdadeira em um mundo de imperfeições humanas."
+            ],
+            gab: "B", feed: "A frase utiliza a ironia para criticar a impunidade: se todos são corruptos, ninguém é punido, criando uma falsa sensação de 'justiça' pela igualdade no erro."
+        },
+        {
+            id: 2, disc: "Língua Portuguesa",
+            q: 'Quanto ao emprego do hífen, assinale a alternativa em que todos os vocábulos estão corretamente grafados segundo o Novo Acordo Ortográfico de 2008.',
+            ops: [
+                "(A) hiper-conectado / subutilizado",
+                "(B) extrajudicial / mal-feito",
+                "(C) anti-corrupção / vice-diretor",
+                "(D) autoestima / recém-nascido",
+                "(E) semi-aberto / coautor"
+            ],
+            gab: "D", feed: "Correto: Autoestima (vogais diferentes = junto) e Recém-nascido (recém exige hífen). Erros: Hiperconectado (sem hífen), Malfeito (sem hífen), Anticorrupção (dobra o R), Semiaberto (sem hífen)."
+        },
+        {
+            id: 3, disc: "Língua Portuguesa",
+            q: 'Assinale a frase em que o sinal de crase foi corretamente empregado em ambas as ocorrências.',
+            ops: [
+                "(A) Em razão da rejeição à essa tecnologia sustentável nas empresas, gestores recomendam atenção à nova dinâmica ambiental corporativa.",
+                "(B) A contribuição de ações solidárias à reconstrução das comunidades afetadas é inquestionável, além de oferecer suporte à populações em situação de emergência.",
+                "(C) No que se refere às medidas preventivas no setor de saúde pública, é vital que as decisões governamentais sejam tomadas à luz das evidências científicas disponíveis.",
+                "(D) Para trazer benefícios à segurança viária, é essencial que os motoristas se dediquem à alguma forma de direção defensiva.",
+                "(E) A ampliação do acesso à cultura digital nas zonas rurais une inovação à prática social em contextos periféricos."
+            ],
+            gab: "C", feed: "'Às medidas' (correto, preposição + artigo) e 'à luz das' (locução prepositiva feminina). Erros: A (antes de 'essa'), B (antes de plural 'populações'), D (antes de 'alguma')."
+        },
+        {
+            id: 4, disc: "Língua Portuguesa",
+            q: 'Assinale a frase que apresenta linguagem conotativa.',
+            ops: [
+                "(A) O novo projeto floresceu após meses de trabalho e dedicação da equipe.",
+                "(B) O professor iluminou o quadro com uma lanterna para explicar o conteúdo de física.",
+                "(C) O funcionário assinou o contrato na presença de duas testemunhas.",
+                "(D) O estudante abriu o livro na página indicada pelo examinador.",
+                "(E) O motorista parou o carro diante do semáforo vermelho."
+            ],
+            gab: "A", feed: "'Floresceu' está em sentido figurado (prosperou, deu certo), caracterizando linguagem conotativa."
+        },
+        {
+            id: 5, disc: "Língua Portuguesa",
+            q: '"Muitos homens fracassam em se tornar pensadores somente porque a sua memória é demasiadamente boa."\nSegundo a frase,',
+            ops: [
+                "(A) o acúmulo de lembranças pode aprisionar o pensamento na repetição do já conhecido.",
+                "(B) a memória é um obstáculo quando é forte e capaz de conservar o saber.",
+                "(C) a verdadeira reflexão nasce com o esquecimento dos fatos e das experiências passadas.",
+                "(D) o pensamento criador exige a capacidade de recordar o que foi aprendido.",
+                "(E) a mente esquecida é superior à mente que tudo retém."
+            ],
+            gab: "A", feed: "O texto sugere que quem apenas memoriza repete o passado e falha em criar pensamentos novos (tornar-se pensador)."
+        },
+        {
+            id: 6, disc: "Língua Portuguesa",
+            q: 'Assinale a frase em que a colocação pronominal é gramaticalmente inadequada.',
+            ops: [
+                "(A) A esperança é o sentimento mais duradouro em tempos difíceis, tornando-se o abrigo mais procurado na incerteza.",
+                "(B) Nesses congressos científicos, em que se apresentariam novas metodologias, é valorizada a prática experimental.",
+                "(C) Nas empresas inovadoras, priorizar-se-ão métodos ágeis, fortalecendo o trabalho em equipe.",
+                "(D) O êxito das novas experiências já lhe tem despertado um olhar mais sensível sobre a própria trajetória.",
+                "(E) Alguns jornais antigos pintavam-nos como resistentes e resilientes, contrariando as narrativas."
+            ],
+            gab: "E", feed: "O pronome indefinido 'Alguns' é fator de atração (próclise). O correto seria 'Alguns jornais antigos NOS pintavam'."
+        },
+        {
+            id: 7, disc: "Língua Portuguesa",
+            q: 'Sobre as características do texto narrativo, é correto afirmar que ele se define, principalmente, por:',
+            ops: [
+                "(A) apresentar fatos de forma objetiva e imparcial, priorizando a exposição de informações em vez da criação de enredo.",
+                "(B) desenvolver um ponto de vista por meio de argumentos e exemplos que buscam convencer o leitor sobre determinado tema.",
+                "(C) descrever personagens, ambientes e ações de modo minucioso, concentrando-se nos aspectos sensoriais da cena.",
+                "(D) combinar informações e instruções para orientar o leitor na execução de uma ação, com verbos predominantemente no imperativo.",
+                "(E) organizar acontecimentos em sequência lógica e temporal, atribuindo-lhes causas e consequências dentro de uma estrutura com personagens e narrador."
+            ],
+            gab: "E", feed: "A narração caracteriza-se pela sequência temporal de fatos, personagens, enredo e narrador."
+        },
+        {
+            id: 8, disc: "Língua Portuguesa",
+            q: 'Assinale a alternativa que apresenta corretamente a regência verbal.',
+            ops: [
+                "(A) Assumir um cargo público implica grandes responsabilidades.",
+                "(B) Ela esqueceu das promessas feitas ao partir.",
+                "(C) O artista rebelde nunca obedeceu as regras da padronização.",
+                "(D) É difícil não nos simpatizarmos com quem carrega no olhar uma bondade silenciosa.",
+                "(E) Prefiro mais a calma das madrugadas do que algazarra das manhãs apressadas."
+            ],
+            gab: "A", feed: "O verbo implicar (sentido de acarretar) é Transitivo Direto. Erros: 'Esqueceu das' (deveria ser 'Esqueceu-se das' ou 'Esqueceu as'), 'Obedeceu as' (Obedeceu Às), 'Prefiro mais/do que' (Prefiro X a Y)."
+        },
+        {
+            id: 9, disc: "Língua Portuguesa",
+            q: 'No texto, o vocábulo "deletério" é sinônimo de:',
+            ops: [
+                "(A) desnecessário.",
+                "(B) prejudicial.",
+                "(C) incerto.",
+                "(D) instável.",
+                "(E) exagerado."
+            ],
+            gab: "B", feed: "Deletério significa nocivo, prejudicial, insalubre."
+        },
+        {
+            id: 10, disc: "Língua Portuguesa",
+            q: 'Nos dois últimos períodos do texto, o total de substantivos presentes é igual a:',
+            ops: [
+                "(A) oito.",
+                "(B) nove.",
+                "(C) dez.",
+                "(D) onze.",
+                "(E) doze."
+            ],
+            gab: "E", feed: "Contando no texto de Bertrand Russell: Conhecimento, poder, poder, mal, bem (1º período); sabedoria, medida, conhecimento, avanço, saber, avanço, pesar (2º período). Total 12."
+        },
+        {
+            id: 11, disc: "Língua Portuguesa",
+            q: 'Considere os termos "à insanidade" e "de sobrevivência" no texto. Do ponto de vista sintático, é correto dizer que:',
+            ops: [
+                "(A) ambos são adjuntos adnominais.",
+                "(B) ambos são complementos nominais.",
+                "(C) o primeiro é um adjunto adnominal, já o segundo um complemento nominal.",
+                "(D) o primeiro é um complemento nominal, já o segundo um adjunto adnominal.",
+                "(E) o primeiro é um aposto, já o segundo um adjunto adverbial."
+            ],
+            gab: "B", feed: "'Aliados à insanidade' (completa adjetivo = Complemento Nominal). 'Certeza de sobrevivência' (completa substantivo abstrato = Complemento Nominal)."
+        },
+        {
+            id: 12, disc: "Língua Portuguesa",
+            q: '"Segue-se daí que, se a sabedoria não avançar na medida do conhecimento, ao avanço do saber corresponderá o avanço do pesar."\nNo período anterior, a oração destacada estabelece uma ideia de:',
+            ops: [
+                "(A) condição.",
+                "(B) conformidade.",
+                "(C) finalidade.",
+                "(D) consequência.",
+                "(E) tempo."
+            ],
+            gab: "A", feed: "A conjunção 'se' introduz uma oração subordinada adverbial condicional."
+        },
+        {
+            id: 13, disc: "Língua Portuguesa",
+            q: 'No texto, o vocábulo "avanço" é formado pelo processo de:',
+            ops: [
+                "(A) derivação regressiva.",
+                "(B) derivação prefixal.",
+                "(C) derivação parassintética.",
+                "(D) derivação sufixal.",
+                "(E) derivação imprópria."
+            ],
+            gab: "A", feed: "O substantivo 'avanço' deriva do verbo 'avançar' por redução (perda do R final), caracterizando derivação regressiva."
+        },
+        {
+            id: 14, disc: "Língua Portuguesa",
+            q: 'Observe a imagem a seguir (Amazônia de Pé - Medicamentos). A partir dela, infere-se que:',
+            ops: [
+                "(A) a exploração científica da Amazônia é uma ameaça direta à preservação ambiental e ao futuro das descobertas em saúde.",
+                "(B) o valor da Amazônia está não só na extração de seus recursos madeireiros e minerais, mas também em suas fontes de princípios ativos naturais.",
+                "(C) preservar a Amazônia permite explorar seu potencial científico, contribuindo para o desenvolvimento sustentável sem destruir o meio ambiente.",
+                "(D) o desmatamento da Amazônia, mesmo a contragosto, é essencial para que as descobertas científicas na área da saúde ocorram.",
+                "(E) o trabalho dos pesquisadores de saúde é desafiador diante da imensa diversidade natural da Amazônia."
+            ],
+            gab: "B", feed: "A charge mostra a extração de medicamentos (analgésico, cicatrizante) da floresta viva ('de pé'), ressaltando seu valor biotecnológico."
+        },
+        {
+            id: 15, disc: "Língua Portuguesa",
+            q: 'Assinale a frase em que a concordância verbal está correta.',
+            ops: [
+                "(A) Trinta minutos são muito para resolver apenas uma questão de prova.",
+                "(B) O professor ou a coordenadora assumirão a direção do projeto final.",
+                "(C) Deve ter ocorrido diversos problemas durante a implantação do novo software.",
+                "(D) Dedicação e aplicação é o combustível ideal para quem sonha com a aprovação.",
+                "(E) Nenhum dos convidados aceitaram o convite para o jantar beneficente."
+            ],
+            gab: "D", feed: "Sujeito composto ('Dedicação e aplicação') com ideia de sinonímia ou gradação admite verbo no singular. A: 'É muito' (quantidade/peso). B: 'Assumirá' (exclusão). C: 'Devem ter ocorrido'. E: 'Aceitou' (Nenhum)."
+        },
+        {
+            id: 16, disc: "Língua Portuguesa",
+            q: 'Assinale a frase cuja pontuação é inteiramente correta.',
+            ops: [
+                "(A) Com disso, assim que a pressa domina o dia o desejo por calma se torna uma necessidade quase urgente.",
+                "(B) O escritor sugere que no lugar de suprimir os sonhos infantis, deveríamos, quem sabe, cultivá-los como parte da essência que nos mantém criativos.",
+                "(C) Quem dera então, o hábito da leitura fosse, portanto, um impulso natural entre jovens.",
+                "(D) Jamais abandone seus princípios: afinal de tudo, duvidar do que se é, simboliza a ruptura da própria identidade.",
+                "(E) Talvez seja verdade: nos dias de silêncio, ouvir o barulho da chuva durante a madrugada pode ser reconfortante."
+            ],
+            gab: "E", feed: "Uso correto de dois-pontos para introduzir explicação/aposto e vírgulas para isolar adjuntos."
+        },
+        {
+            id: 17, disc: "Língua Portuguesa",
+            q: 'Considerando a importância da coesão para a produção de textos claros e coerentes, analise as seguintes afirmações sobre os mecanismos coesivos e assinale a alternativa correta.',
+            ops: [
+                "(A) A coerência textual é garantida sempre que se utilizam sinônimos e pronomes, pois esses recursos asseguram a progressão lógica das ideias no texto.",
+                "(B) A coesão referencial ocorre quando elementos do texto fazem referência a outros já mencionados, estabelecendo conexões que evitam repetições desnecessárias.",
+                "(C) A repetição de conectivos, como \"e\", \"mas\", \"embora\", assegura a coerência do texto, pois impede que haja ambiguidades nas relações entre as ideias.",
+                "(D) A coerência é um recurso essencialmente gramatical, por isso independe do conhecimento de mundo do leitor.",
+                "(E) A coesão sequencial é aquela em que há substituições de palavras por sinônimos, garantindo que todas as frases estejam completas."
+            ],
+            gab: "B", feed: "A definição correta de coesão referencial é a retomada (anáfora) ou antecipação (catáfora) de termos para evitar repetições."
+        },
+        // --- INFORMÁTICA ---
+        {
+            id: 18, disc: "Noções de Informática",
+            q: 'No contexto da computação, os sistemas são compostos por elementos físicos e lógicos que trabalham em conjunto. A compreensão da distinção entre Hardware e Software, bem como suas classificações e funcionalidades, é fundamental. Assinale a alternativa que descreve corretamente um desses conceitos.',
+            ops: [
+                "(A) Hardware refere-se ao conjunto de programas e instruções lógicas que controlam o funcionamento do computador, como o sistema operacional.",
+                "(B) Software de Sistema é a categoria que engloba programas de uso final, como editores de texto e planilhas eletrônicas.",
+                "(C) Os periféricos de entrada, como o monitor e a impressora, são responsáveis por exibir os resultados do processamento.",
+                "(D) Software Aplicativo inclui programas essenciais como os drivers de dispositivo, que permitem a comunicação entre o sistema operacional e o hardware.",
+                "(E) Software Utilitário consiste em programas projetados para realizar tarefas de manutenção, otimização ou segurança do sistema, como antivírus e ferramentas de backup."
+            ],
+            gab: "E", feed: "Software Utilitário foca na manutenção e infraestrutura do sistema (ex: Antivírus, Backup, Compactadores)."
+        },
+        {
+            id: 19, disc: "Noções de Informática",
+            q: 'Os softwares, que constituem a parte lógica de um sistema computacional, são classificados em diferentes categorias de acordo com a sua função. Essa classificação inclui softwares de sistema, aplicativos, utilitários e drivers. Assinale a alternativa que descreve corretamente a categoria de Software Aplicativo.',
+            ops: [
+                "(A) Programas desenvolvidos para que o usuário final possa realizar tarefas específicas, como editar textos, navegar na internet ou criar planilhas.",
+                "(B) O conjunto essencial de programas que gerencia os recursos de hardware do computador e serve de base para outros softwares, como o Windows ou o Linux.",
+                "(C) Ferramentas que auxiliam na manutenção, segurança ou otimização do sistema operacional, como antivírus e desfragmentadores.",
+                "(D) Software específico que permite ao sistema operacional se comunicar e controlar um determinado dispositivo de hardware, como uma impressora ou placa de video.",
+                "(E) Códigos maliciosos projetados para causar danos, roubar informações ou realizar outras ações prejudiciais sem o consentimento do usuário."
+            ],
+            gab: "A", feed: "Software Aplicativo é aquele voltado para a tarefa do usuário (Word, Excel, Navegadores)."
+        },
+        {
+            id: 20, disc: "Noções de Informática",
+            q: 'No sistema operacional Windows 11, o gerenciamento de arquivos e pastas pode ser agilizado por meio do uso de teclas de atalho no Explorador de Arquivos. Essas combinações permitem executar ações comuns de manipulação sem a necessidade do mouse. Assinale a alternativa que apresenta a correta associação entre a tecla de atalho e sua função.',
+            ops: [
+                "(A) F2: copia o arquivo ou pasta selecionado para a área de transferência.",
+                "(B) Ctrl+Shift+N: cria uma nova pasta no local atual.",
+                "(C) Ctrl+X: exclui permanentemente o arquivo ou pasta selecionado, sem enviá-lo para a Lixeira.",
+                "(D) Alt + Enter: abre a Lixeira para visualizar arquivos excluídos.",
+                "(E) Shift + Delete: move o arquivo ou pasta selecionado para a Lixeira."
+            ],
+            gab: "B", feed: "Ctrl+Shift+N cria Nova Pasta. Shift+Del exclui permanentemente. F2 renomeia. Ctrl+X recorta."
+        },
+        {
+            id: 21, disc: "Noções de Informática",
+            q: 'O sistema operacional Linux organiza seus arquivos e diretórios em uma estrutura hierárquica padronizada, conhecida como FHS (Filesystem Hierarchy Standard). Cada diretório principal possui uma finalidade específica. Assinale a alternativa que descreve corretamente o conteúdo ou a finalidade do diretório /etc.',
+            ops: [
+                "(A) Armazena os arquivos e pastas pessoais dos usuários comuns do sistema.",
+                "(B) Contém os arquivos essenciais para o processo de inicialização (boot) do sistema, como o kernel.",
+                "(C) Guarda os arquivos de configuração de todo o sistema e dos programas instalados.",
+                "(D) É utilizado para armazenar arquivos temporários críados por usuários e programas.",
+                "(E) Contém os comandos (binários executáveis) essenciais disponíveis para todos os usuários."
+            ],
+            gab: "C", feed: "O diretório /etc armazena os arquivos de configuração do sistema (Etcetera -> Config)."
+        },
+        {
+            id: 22, disc: "Noções de Informática",
+            q: 'O Microsoft Word oferece ferramentas avançadas para a criação e automação de documentos complexos. Entre essas ferramentas, destacam-se a Mala Direta e o Sumário Automático. Assinale a alternativa que descreve corretamente a principal finalidade de um desses recursos.',
+            ops: [
+                "(A) A Mala Direta é utilizada para gerar automaticamente um índice remissivo com os termos mais importantes do documento e suas respectivas páginas.",
+                "(B) O Sumário Automático tem como função principal mesclar um documento modelo com uma lista de dados (como nomes e endereços) para criar correspondências personalizadas em massa.",
+                "(C) A Mala Direta serve para verificar a ortografia e a gramática do documento, sugerindo correções e melhorias textuais.",
+                "(D) O Sumário Automático cria uma lista dos títulos e subtítulos do documento, juntamente com os números das páginas onde eles se iniciam, com base nos estilos de título aplicados.",
+                "(E) O Sumário Automático é uma ferramenta para proteger o documento com senha, impedindo o acesso não autorizado ao seu conteúdo."
+            ],
+            gab: "D", feed: "O Sumário Automático no Word gera uma lista de títulos e páginas baseada na formatação de Estilos (Título 1, Título 2...)."
+        },
+        {
+            id: 23, disc: "Noções de Informática",
+            q: 'Um Oficial Investigador de Polícia da PCES está utilizando uma planilha no Microsoft Excel para classificar evidências coletadas, indicando "APTO" se a evidência passou pela perícia (célula B2 contém "Sim") e "PENDENTE" caso contrário (célula B2 contém "Não”). Assinale a alternativa que apresenta a fórmula correta a ser inserida para realizar essa classificação automática.',
+            ops: [
+                "(A) =SE(B2=\"Sim\";\"APTO\";\"PENDENTE\")",
+                "(B) =PROCV(B2; {\"Sim\"; \"APTO\"|\"Não\";\"PENDENTE\"};2;FALSO)",
+                "(C) =SOMASE(B2;\"Sim\";\"APTO\")",
+                "(D) =SE(B2<>\"Sim\";\"APTO\";\"PENDENTE\")",
+                "(E) =CONT.SE(B2;\"Sim\")=\"APTO\""
+            ],
+            gab: "A", feed: "A função SE(teste; verdadeiro; falso) verifica se B2 é 'Sim'. Se for, escreve APTO, senão PENDENTE."
+        },
+        {
+            id: 24, disc: "Noções de Informática",
+            q: 'Um Oficial Investigador de Polícia da PC-ES está em modo de apresentação de slides (tela cheia) no Microsoft PowerPoint, exibindo um relatório para a sua equipe. Durante a apresentação, ele precisa controlar o fluxo de slides, avançando e retrocedendo o conteúdo. Assinale a alternativa que apresenta uma tecla de atalho ou ação correta para retornar ao slide anterior.',
+            ops: [
+                "(A) Pressionar a tecla Barra de Espaço.",
+                "(B) Pressionar a tecla Enter.",
+                "(C) Pressionar a tecla Seta para a Direita.",
+                "(D) Pressionar a tecla Backspace.",
+                "(E) Clicar com o botão esquerdo do mouse."
+            ],
+            gab: "D", feed: "No modo apresentação, Backspace ou 'P' (Previous) volta. Espaço, Enter, Seta Direita e Clique avançam."
+        },
+        {
+            id: 25, disc: "Noções de Informática",
+            q: 'As redes de computadores são classificadas de acordo com diversos critérios, sendo a abrangência geográfica um dos mais comuns. Essa classificação define a escala de cobertura da rede. Assinale a alternativa que descreve corretamente a rede MAN.',
+            ops: [
+                "(A) É uma rede de curtíssimo alcance, utilizada para conectar dispositivos pessoais como fones de ouvido e teclados sem fio a um smartphone.",
+                "(B) Abrange uma área geográfica correspondente a uma cidade ou região metropolitana, interligando diferentes redes locais (LANs) dentro dessa área.",
+                "(C) Consiste na rede mundial de computadores, de acesso público, que conecta dispositivos em escala global.",
+                "(D) É uma rede restrita a um único edifício ou campus, conectando computadores e impressoras de um mesmo escritório ou departamento.",
+                "(E) Refere-se a uma rede privada virtual que utiliza criptografia para criar uma conexão segura sobre a Internet."
+            ],
+            gab: "B", feed: "MAN (Metropolitan Area Network) abrange o tamanho de uma cidade ou região metropolitana."
+        },
+        {
+            id: 26, disc: "Noções de Informática",
+            q: 'A classificação das redes de computadores também pode ser feita com base no seu escopo de acesso e propósito, distinguindo-se entre Internet, Intranet e Extranet. Sobre esses conceitos, assinale a alternativa correta.',
+            ops: [
+                "(A) A Intranet é uma rede pública que utiliza protocolos proprietários, diferente da Internet que usa o TCP/IP.",
+                "(B) A Extranet é a rede mundial de computadores, acessível por qualquer usuário com conexão à Internet.",
+                "(C) A Intranet é uma rede privada de uma organização, que utiliza tecnologias da Internet (como TCP/IP e navegadores) para acesso restrito aos seus membros.",
+                "(D) A Internet é uma extensão segura da Intranet, destinada ao acesso de parceiros comerciais e fornecedores.",
+                "(E) A Extranet utiliza protocolos diferentes do TCP/IP para garantir maior segurança no acesso externo."
+            ],
+            gab: "C", feed: "Intranet usa os mesmos protocolos da Internet (TCP/IP), mas seu acesso é restrito ao público interno da organização."
+        },
+        {
+            id: 27, disc: "Noções de Informática",
+            q: 'O correio eletrônico (e-mail) é uma ferramenta essencial para a comunicação no ambiente de trabalho, permitindo o envio de mensagens de texto e também de arquivos anexos. Sobre o preparo e envio de mensagens com anexos, assinale a alternativa correta.',
+            ops: [
+                "(A) Ao receber um e-mail com an
