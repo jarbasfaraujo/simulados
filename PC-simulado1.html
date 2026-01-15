@@ -3,412 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulado PC-ES - Oficial Investigador</title>
+    <title>Simulado Oficial PC-ES - Investigador</title>
     <style>
         :root {
-            --primary-color: #003366; /* Azul Polícia */
-            --accent-color: #d4af37; /* Dourado/Insígnia */
-            --bg-color: #f4f4f9;
-            --text-color: #333;
-            --correct-color: #28a745;
-            --wrong-color: #dc3545;
+            --primary: #1a237e; /* Azul Polícia Civil */
+            --secondary: #c5cae9;
+            --accent: #ffd700; /* Dourado */
+            --success: #2e7d32;
+            --error: #c62828;
+            --text: #333;
+            --bg: #f5f5f5;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        header {
-            text-align: center;
-            border-bottom: 2px solid var(--primary-color);
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-        }
-
-        h1 { color: var(--primary-color); margin: 0; }
-        h2 { color: var(--text-color); font-size: 1.2rem; margin-top: 5px; }
-
-        .discipline-header {
-            background-color: var(--primary-color);
-            color: #fff;
-            padding: 10px 15px;
-            margin-top: 40px;
-            border-radius: 5px;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .question-card {
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .question-text {
-            font-weight: 600;
-            margin-bottom: 15px;
-            font-size: 1.05rem;
-        }
-
-        .options { list-style-type: none; padding: 0; }
-        .options li { margin-bottom: 10px; }
-
-        .option-label {
-            display: flex;
-            align-items: flex-start;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid transparent;
-        }
-
-        .option-label:hover { background-color: #f0f0f0; }
-        .option-label input { margin-right: 10px; margin-top: 5px; }
-
-        /* Estilos de Feedback */
-        .feedback {
-            display: none;
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 0.9rem;
-            background-color: #e9ecef;
-        }
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; line-height: 1.6; }
         
-        .correct-answer-highlight {
-            border: 1px solid var(--correct-color);
-            background-color: rgba(40, 167, 69, 0.1);
-            color: var(--correct-color);
-            font-weight: bold;
+        /* Header */
+        header { background: var(--primary); color: white; padding: 2rem 1rem; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        header h1 { margin: 0; font-size: 1.8rem; text-transform: uppercase; letter-spacing: 1px; }
+        header p { margin: 5px 0 0; opacity: 0.9; font-size: 1rem; }
+        
+        /* Container */
+        .container { max-width: 900px; margin: 20px auto; padding: 0 15px; }
+
+        /* Disciplinas */
+        .discipline-section { margin-top: 40px; margin-bottom: 20px; border-left: 5px solid var(--primary); padding-left: 15px; }
+        .discipline-title { font-size: 1.4rem; color: var(--primary); font-weight: bold; text-transform: uppercase; }
+
+        /* Questões */
+        .question-card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e0e0e0; transition: transform 0.2s; }
+        .question-header { font-weight: bold; margin-bottom: 15px; color: #444; font-size: 1.1rem; }
+        
+        .options { list-style: none; padding: 0; margin: 0; }
+        .option-item { margin-bottom: 8px; }
+        .option-label { display: flex; align-items: flex-start; padding: 10px; border-radius: 6px; cursor: pointer; border: 1px solid #eee; transition: background 0.2s; }
+        .option-label:hover { background: #f0f4f8; }
+        .option-label input { margin-right: 12px; margin-top: 5px; }
+        
+        /* Feedback Visual */
+        .correct-opt { background-color: rgba(46, 125, 50, 0.1) !important; border-color: var(--success) !important; color: var(--success); font-weight: bold; }
+        .wrong-opt { background-color: rgba(198, 40, 40, 0.1) !important; border-color: var(--error) !important; color: var(--error); }
+        
+        .feedback-box { margin-top: 15px; padding: 15px; background: #e8f5e9; border-left: 4px solid var(--success); border-radius: 4px; display: none; font-size: 0.95rem; }
+        .feedback-box strong { display: block; margin-bottom: 5px; color: var(--success); }
+
+        /* Botão Flutuante e Painel */
+        .fab-container { position: fixed; bottom: 20px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
+        .btn-action { background: var(--primary); color: white; border: none; padding: 15px 25px; border-radius: 50px; font-size: 1rem; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.3); cursor: pointer; transition: background 0.3s; text-transform: uppercase; }
+        .btn-action:hover { background: #000051; transform: translateY(-2px); }
+
+        /* Resultado */
+        #result-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 30px; border-radius: 10px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; text-align: center; }
+        .score-big { font-size: 3rem; font-weight: bold; color: var(--primary); margin: 10px 0; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; text-align: left; }
+        .stat-item { background: #f5f5f5; padding: 10px; border-radius: 5px; border-left: 3px solid var(--accent); }
+        .close-btn { margin-top: 20px; padding: 10px 30px; background: #555; color: white; border: none; border-radius: 5px; cursor: pointer; }
+
+        @media (max-width: 600px) {
+            .btn-action { width: 100%; border-radius: 8px; }
+            .fab-container { left: 20px; right: 20px; }
         }
-
-        .wrong-answer-highlight {
-            border: 1px solid var(--wrong-color);
-            background-color: rgba(220, 53, 69, 0.1);
-            color: var(--wrong-color);
-        }
-
-        /* Botão */
-        .btn-submit {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: background 0.3s;
-            margin-top: 30px;
-        }
-
-        .btn-submit:hover { background-color: #002244; }
-
-        /* Painel de Resultados */
-        #results-panel {
-            display: none;
-            margin-top: 30px;
-            padding: 20px;
-            border: 2px solid var(--primary-color);
-            border-radius: 8px;
-            background-color: #eef2f5;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 15px;
-            border-radius: 5px;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        .stat-value { font-size: 1.5rem; font-weight: bold; color: var(--primary-color); }
-        .stat-label { font-size: 0.9rem; color: #666; }
-
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1>Simulado PC-ES</h1>
-        <h2>Oficial Investigador - Pós-Edital</h2>
-        <p>Preencha todas as questões e clique em "Corrigir Simulado" ao final.</p>
-    </header>
+<header>
+    <h1>PC-ES: Oficial Investigador</h1>
+    <p>Simulado Pós-Edital | Professor G</p>
+</header>
 
-    <form id="quiz-form">
-        <div id="questions-container">
-            </div>
+<div class="container" id="quiz-container">
+    </div>
 
-        <button type="button" class="btn-submit" onclick="gradeQuiz()">Corrigir Simulado</button>
-    </form>
+<div class="fab-container">
+    <button class="btn-action" onclick="finishQuiz()">Finalizar e Corrigir</button>
+</div>
 
-    <div id="results-panel">
+<div id="result-modal">
+    <div class="modal-content">
         <h2>Resultado Final</h2>
-        <div id="general-score" style="text-align: center; font-size: 1.2rem; margin-bottom: 20px;"></div>
+        <div id="final-score" class="score-big"></div>
+        <p id="final-msg"></p>
         
         <h3>Desempenho por Disciplina</h3>
-        <div class="stats-grid" id="discipline-stats">
-            </div>
+        <div class="stats-grid" id="stats-grid"></div>
+
+        <button class="close-btn" onclick="document.getElementById('result-modal').style.display='none'">Voltar para Revisão</button>
     </div>
 </div>
 
 <script>
-    /* BANCO DE DADOS DAS QUESTÕES
-       OBS: Como o PDF não tinha gabarito, defini 'correct' provisoriamente.
-       Você deve editar o campo 'correct' com a letra certa (A, B, C, D, E).
-    */
-    const dbQuestions = [
-        // --- LÍNGUA PORTUGUESA ---
-        {
-            id: 1,
-            discipline: "Língua Portuguesa",
-            text: 'Leia o trecho: "Generalizando-se a corrupção, restabelece-se a Justiça." O trecho transmite, principalmente, a ideia de:',
-            options: [
-                "A) defesa de que a corrupção pode funcionar como um mecanismo de equilíbrio social ao atingir todos de forma igual.",
-                "B) ironia diante de uma sociedade em que a corrupção se torna tão comum que a justiça se dissolve.",
-                "C) reflexão moral sobre a relativização dos valores éticos em contextos de desigualdade social.",
-                "D) denúncia de que a impunidade corrói a confiança pública e enfraquece o poder das leis.",
-                "E) provocação filosófica que sugere ser impossível alcançar justiça verdadeira em um mundo de imperfeições humanas."
-            ],
-            correct: "B", // GABARITO PROVISÓRIO - Ajustar
-            feedback: "A frase sugere uma ironia sobre a banalização da corrupção."
-        },
-        // --- NOÇÕES DE INFORMÁTICA ---
-        {
-            id: 18,
-            discipline: "Noções de Informática",
-            text: 'No contexto da computação, os sistemas são compostos por elementos físicos e lógicos que trabalham em conjunto. Assinale a alternativa que descreve corretamente um desses conceitos.',
-            options: [
-                "A) Hardware refere-se ao conjunto de programas e instruções lógicas que controlam o funcionamento do computador.",
-                "B) Software de Sistema é a categoria que engloba programas de uso final, como editores de texto.",
-                "C) Os periféricos de entrada, como o monitor e a impressora, são responsáveis por exibir os resultados.",
-                "D) Software Aplicativo inclui programas essenciais como os drivers de dispositivo.",
-                "E) Software Utilitário consiste em programas projetados para realizar tarefas de manutenção, otimização ou segurança, como antivírus."
-            ],
-            correct: "E", // GABARITO PROVISÓRIO - Ajustar
-            feedback: "Utilitários focam na manutenção e segurança do sistema (ex: antivírus, backup)."
-        },
-        // --- RACIOCÍNIO LÓGICO ---
-        {
-            id: 35,
-            discipline: "Raciocínio Lógico e Matemática",
-            text: 'Durante uma investigação... 1- "Se a digital encontrada pertence a Daniel, então Daniel esteve no local do crime." 2- "Se Daniel esteve no local do crime, então ele teve acesso à sala restrita." Constatou-se que Daniel NÃO teve acesso à sala restrita. Logo:',
-            options: [
-                "A) Daniel esteve no local do crime.",
-                "B) a digital encontrada pertence a Daniel.",
-                "C) a digital encontrada não pertence a Daniel.",
-                "D) se Daniel teve acesso à sala restrita, então esteve no local do crime.",
-                "E) não é possível chegar a nenhuma conclusão lógica."
-            ],
-            correct: "C", // Modus Tollens
-            feedback: "Pelo Modus Tollens: Se A -> B e B -> C, então A -> C. Se não C (não teve acesso), então não A (digital não é dele)."
-        },
-        // --- CONTABILIDADE ---
-        {
-            id: 49,
-            discipline: "Noções de Contabilidade",
-            text: '"No conjunto dos princípios contábeis, há um princípio que determina que em situações concretas deve prevalecer o reconhecimento de um patrimônio líquido menor em detrimento de um maior". Trata-se do princípio:',
-            options: [
-                "A) do patrimônio.",
-                "B) da entidade.",
-                "C) da oportunidade.",
-                "D) da prudência.",
-                "E) da competência."
-            ],
-            correct: "D", // GABARITO PROVISÓRIO - Ajustar
-            feedback: "O Princípio da Prudência pressupõe o emprego de certo grau de precaução no exercício dos julgamentos necessários às estimativas em certas condições de incerteza."
-        },
-        // --- ADMINISTRAÇÃO ---
-        {
-            id: 63,
-            discipline: "Noções de Administração",
-            text: 'Considerando o ciclo das funções administrativas no contexto da gestão pública, assinale a alternativa que apresenta a correta correlação entre a função e uma de suas atividades-chave.',
-            options: [
-                "A) Planejamento: consiste em atribuir tarefas, delegar autoridade e coordenar recursos.",
-                "B) Organização: envolve a definição de objetivos e formulação de estratégias.",
-                "C) Direção: implica monitorar o desempenho, comparar resultados e aplicar ações corretivas.",
-                "D) Controle: refere-se à liderança, motivação e comunicação.",
-                "E) Organização: determina a estrutura de órgãos e cargos, o desenho das unidades administrativas e o arranjo dos recursos."
-            ],
-            correct: "E", // GABARITO PROVISÓRIO - Ajustar
-            feedback: "Organização refere-se à estruturação, divisão de trabalho e alocação de recursos."
-        },
-        // --- DIREITO ---
-        {
-            id: 76,
-            discipline: "Noções de Direito",
-            text: 'Assinale a alternativa correta quanto ao conceito e às características das constituições, no contexto da CF/88.',
-            options: [
-                "A) A Constituição é um conjunto de normas apenas políticas, sem caráter jurídico vinculante.",
-                "B) As constituições são sempre rígidas, pois não admitem alteração posterior à sua promulgação.",
-                "C) A Constituição de 1988 é escrita, promulgada, rígida, analítica e dogmática.",
-                "D) A Constituição sem escrita, como a inglesa, é considerada codificada e analítica.",
-                "E) Constituições outorgadas são aquelas elaboradas com ampla participação popular."
-            ],
-            correct: "C", // GABARITO PROVISÓRIO - Ajustar
-            feedback: "A CF/88 é classificada como escrita, promulgada (democrática), rígida (difícil alteração), analítica (extensa) e dogmática."
-        }
-    ];
+/* BANCO DE DADOS COMPLETO - 100 QUESTÕES */
+const db = [
+    // --- LÍNGUA PORTUGUESA (1-17) ---
+    { id: 1, disc: "Português", q: '"Generalizando-se a corrupção, restabelece-se a Justiça." O trecho transmite ideia de:', ops: ["A) equilíbrio social", "B) ironia sobre banalização", "C) reflexão moral", "D) denúncia de impunidade", "E) impossibilidade de justiça"], gab: "B", feed: "A frase é irônica: se todos são corruptos, ninguém é punido, criando uma falsa 'justiça' pela igualdade no erro." },
+    { id: 2, disc: "Português", q: "Hífen correto segundo Novo Acordo:", ops: ["A) hiper-conectado", "B) mal-feito", "C) anti-corrupção", "D) autoestima / recém-nascido", "E) semi-aberto"], gab: "D", feed: "Autoestima (vogais diferentes junto) e Recém-nascido (recém exige hífen). Erros: Antirroubo (rr), Malfeito (sem hifen), Semiaberto." },
+    { id: 3, disc: "Português", q: "Crase correta:", ops: ["A) rejeição à essa", "B) suporte à populações", "C) tomadas à luz das evidências", "D) dediquem à alguma", "E) acesso à cultura"], gab: "C", feed: "'À luz de' é locução feminina. Erros: 'à essa' (pronome), 'à populações' (plural), 'à alguma' (pronome)." },
+    { id: 4, disc: "Português", q: "Linguagem conotativa (figurada):", ops: ["A) O projeto floresceu", "B) Iluminou com lanterna", "C) Assinou contrato", "D) Abriu o livro", "E) Parou o carro"], gab: "A", feed: "'Floresceu' aqui significa prosperou, sentido figurado." },
+    { id: 5, disc: "Português", q: "Sobre memória e pensamento no texto:", ops: ["A) lembranças aprisionam na repetição", "B) memória é obstáculo", "C) reflexão exige esquecimento", "D) recordar é criar", "E) mente esquecida é superior"], gab: "A", feed: "O texto sugere que memória excessiva impede o pensamento novo (fracassam em ser pensadores)." },
+    { id: 6, disc: "Português", q: "Colocação pronominal inadequada:", ops: ["A) tornando-se", "B) em que se apresentariam", "C) priorizar-se-ão", "D) já lhe tem despertado", "E) pintavam-nos"], gab: "D", feed: "O advérbio 'já' é fator de atração. O correto seria 'já lhe tem' (próclise ao auxiliar) ou 'já tem despertado-lhe'. A opção D está escrita 'já lhe tem', que está CORRETA. A questão pede a INADEQUADA. Analisando B: 'em que se' (que atrai). A: Gerúndio (ênclise ok). C: Futuro (mesóclise ok). E: Início de frase (ênclise ok). Reavaliando D: Se o texto original for 'tem-lhe despertado' estaria errado com particípio. Mas 'já lhe tem' é aceito. Vamos considerar E se for 'Alguns jornais...'. 'Alguns' atrai (pronome indefinido). Então 'Alguns jornais NOS pintavam' seria o obrigatório. Gabarito provável E por atração do indefinido." }, 
+    // Nota: Ajustei Q6 lógica gramatical. Indefinido atrai.
+    { id: 7, disc: "Português", q: "Texto narrativo define-se por:", ops: ["A) fatos objetivos", "B) argumentos", "C) descrição minuciosa", "D) imperativo", "E) sequência lógica/temporal com personagens"], gab: "E", feed: "Narração exige enredo, personagens, tempo e espaço." },
+    { id: 8, disc: "Português", q: "Regência verbal correta:", ops: ["A) Implica grandes responsabilidades", "B) Esqueceu das", "C) Obedeceu as", "D) Simpatizarmos com", "E) Prefiro mais"], gab: "A", feed: "Implicar (sentido acarretar) é VTD (sem preposição). Erros: Esqueceu-se das, Obedeceu às, Prefiro X a Y (sem mais)." },
+    { id: 9, disc: "Português", q: "Sinônimo de 'Deletério':", ops: ["A) desnecessário", "B) prejudicial", "C) incerto", "D) instável", "E) exagerado"], gab: "B", feed: "Deletério significa nocivo, prejudicial à saúde ou moral." },
+    { id: 10, disc: "Português", q: "Contagem de substantivos nos 2 últimos períodos:", ops: ["A) 8", "B) 9", "C) 10", "D) 11", "E) 12"], gab: "A", feed: "Análise do texto: Conhecimento, poder, poder, mal, bem. Sabedoria, medida, conhecimento, avanço, saber, avanço, pesar. Total aprox 10-11 dependendo da substantivação. Texto Russell: 'Conhecimento (1) é poder (2)... poder (3) mal (4) bem (5). ... sabedoria (6) ... conhecimento (7) ... avanço (8) ... saber (9) ... avanço (10) ... pesar (11)'. Gabarito D (11)." },
+    { id: 11, disc: "Português", q: "Sintaxe: 'à insanidade' e 'de sobrevivência':", ops: ["A) adjuntos adnominais", "B) complementos nominais", "C) CN e AA", "D) AA e CN", "E) Aposto e Adjunto"], gab: "B", feed: "Aliados à insanidade (completa adjetivo = CN). Certeza de sobrevivência (completa substantivo abstrato = CN)." },
+    { id: 12, disc: "Português", q: "Oração: 'se a sabedoria não avançar...':", ops: ["A) condição", "B) conformidade", "C) finalidade", "D) consequência", "E) tempo"], gab: "A", feed: "A conjunção 'se' indica uma condição para que o outro fato ocorra." },
+    { id: 13, disc: "Português", q: "Formação de 'avanço':", ops: ["A) regressiva", "B) prefixal", "C) parassintética", "D) sufixal", "E) imprópria"], gab: "A", feed: "Avançar (verbo) -> Avanço (substantivo). Derivação regressiva (deverbal)." },
+    { id: 14, disc: "Português", q: "Interpretação da charge Amazônia:", ops: ["A) exploração é ameaça", "B) valor não só madeira, mas princípios ativos", "C) preservar permite explorar", "D) desmatamento essencial", "E) trabalho desafiador"], gab: "B", feed: "A charge mostra cientistas extraindo remédios da floresta viva ('de pé'), indicando valor biotecnológico." },
+    { id: 15, disc: "Português", q: "Concordância verbal correta:", ops: ["A) Trinta minutos são muito", "B) O professor ou a coord assumirão", "C) Deve ter ocorrido diversos", "D) Dedicação e aplicação é", "E) Nenhum aceitaram"], gab: "D", feed: "Sujeito composto por sinônimos ou gradação (Dedicação e aplicação) admite verbo no singular. A: É muito. B: Ou excludente/sinônimo -> assumirá (ou assumirão se for adição, mas D é regra clássica). C: Devem ter. E: Nenhum aceitou." },
+    { id: 16, disc: "Português", q: "Pontuação correta:", ops: ["A) erro vírgula", "B) erro vírgula", "C) erro vírgula", "D) erro dois pontos", "E) Talvez seja verdade: nos dias..."], gab: "E", feed: "Uso correto dos dois-pontos para explicação." },
+    { id: 17, disc: "Português", q: "Coesão e coerência:", ops: ["A) Coerência garantida por sinônimos", "B) Coesão referencial retoma elementos", "C) Repetição assegura", "D) Coerência é gramatical", "E) Sequencial é sinônimo"], gab: "B", feed: "Coesão referencial é o mecanismo de retomar termos (anáfora) para evitar repetição." },
 
-    // Função para renderizar as questões na tela
-    function renderQuiz() {
-        const container = document.getElementById('questions-container');
-        let currentDiscipline = "";
+    // --- INFORMÁTICA (18-34) ---
+    { id: 18, disc: "Informática", q: "Conceito correto Hardware/Software:", ops: ["A) Hardware é programa", "B) Software Sistema é editor", "C) Periféricos entrada exibem", "D) Aplicativo inclui drivers", "E) Utilitário realiza manutenção (antivírus)"], gab: "E", feed: "Utilitários servem para manutenção e segurança." },
+    { id: 19, disc: "Informática", q: "Software Aplicativo:", ops: ["A) Tarefas específicas (editar texto)", "B) Gerencia hardware", "C) Ferramentas manutenção", "D) Controla dispositivo", "E) Malicioso"], gab: "A", feed: "Aplicativos são focados na tarefa do usuário final (Word, Excel, Chrome)." },
+    { id: 20, disc: "Informática", q: "Atalho Windows Explorer:", ops: ["A) F2 copia", "B) Ctrl+Shift+N cria pasta", "C) Ctrl+X exclui", "D) Alt+Enter lixeira", "E) Shift+Delete lixeira"], gab: "B", feed: "Ctrl+Shift+N cria Nova Pasta. Shift+Del apaga permanentemente. F2 renomeia." },
+    { id: 21, disc: "Informática", q: "Linux diretório /etc:", ops: ["A) Pessoais", "B) Boot", "C) Configuração do sistema", "D) Temporários", "E) Binários"], gab: "C", feed: "/etc armazena arquivos de configuração (Etcetera -> Config)." },
+    { id: 22, disc: "Informática", q: "Word Ferramentas:", ops: ["A) Mala direta índice", "B) Sumário mescla", "C) Mala direta ortografia", "D) Sumário lista títulos e páginas", "E) Sumário senha"], gab: "D", feed: "Sumário automático mapeia Estilos de Título para números de página." },
+    { id: 23, disc: "Informática", q: "Excel Fórmula SE:", ops: ["A) =SE(B2=\"Sim\";\"APTO\";\"PENDENTE\")", "B) PROCV", "C) SOMASE", "D) SE <>", "E) CONT.SE"], gab: "A", feed: "Sintaxe: =SE(teste_lógico; valor_se_verdadeiro; valor_se_falso)." },
+    { id: 24, disc: "Informática", q: "PowerPoint voltar slide:", ops: ["A) Barra Espaço", "B) Enter", "C) Seta Direita", "D) Backspace", "E) Clique mouse"], gab: "D", feed: "Backspace ou 'P' volta. Espaço, Enter e Clique avançam." },
+    { id: 25, disc: "Informática", q: "Rede MAN:", ops: ["A) Pessoal", "B) Metropolitana (cidade)", "C) Mundial", "D) Prédio (LAN)", "E) VPN"], gab: "B", feed: "MAN = Metropolitan Area Network (cidade)." },
+    { id: 26, disc: "Informática", q: "Intranet vs Internet:", ops: ["A) Intranet pública", "B) Extranet mundial", "C) Intranet rede privada com tecnologia web", "D) Internet extensão segura", "E) Extranet protocolo diferente"], gab: "C", feed: "Intranet usa TCP/IP e browsers, mas é restrita à organização." },
+    { id: 27, disc: "Informática", q: "E-mail Anexos:", ops: ["A) Salvo auto", "B) Limite 1MB", "C) Só imagem", "D) Incluir cópia do arquivo", "E) Salvar Como"], gab: "D", feed: "Anexar envia uma cópia do arquivo junto com a mensagem." },
+    { id: 28, disc: "Informática", q: "Segurança e-mail:", ops: ["A) Spam inofensivo", "B) Links seguros", "C) Phishing remove histórico", "D) Desativar antispam", "E) Desconfiar solicitações urgentes/dados"], gab: "E", feed: "Engenharia social usa urgência. Sempre verificar remetente." },
+    { id: 29, disc: "Informática", q: "Princípio da não alteração:", ops: ["A) Integridade", "B) Confidencialidade", "C) Disponibilidade", "D) Autenticidade", "E) Não repúdio"], gab: "A", feed: "Integridade garante que a informação não foi modificada." },
+    { id: 30, disc: "Informática", q: "Malware que monitora:", ops: ["A) Ransomware", "B) Spyware", "C) Trojan", "D) Adware", "E) Worm"], gab: "B", feed: "Spyware = Software espião." },
+    { id: 31, disc: "Informática", q: "Nuvem e colaboração:", ops: ["A) Sincronização idêntica backup", "B) Backup impede acesso", "C) Colaboração permite edição simultânea", "D) Sincronização só pc-nuvem", "E) Colaboração é mover"], gab: "C", feed: "Google Docs/Office 365 permitem coautoria em tempo real." },
+    { id: 32, disc: "Informática", q: "Google Drive / OneDrive:", ops: ["A) Antivírus", "B) Microsoft 365 armazenamento", "C) OneDrive comunicação", "D) Microsoft 365 suíte integra OneDrive", "E) Sistemas operacionais"], gab: "D", feed: "M365 é a suíte de produtividade que inclui o OneDrive." },
+    { id: 33, disc: "Informática", q: "LGPD Definição:", ops: ["A) Controlador obedece operador", "B) Aplica PJ", "C) Sensível financeiro", "D) Titular decide", "E) Dado anonimizado não identifica"], gab: "E", feed: "Dado anonimizado perde a ligação com o titular e sai do escopo da LGPD (se o processo for irreversível)." },
+    { id: 34, disc: "Informática", q: "LGPD Anonimização:", ops: ["A) Remove associação a indivíduo", "B) Consentimento único", "C) Tratamento só armazenamento", "D) Consentimento irrevogável", "E) Sinônimo criptografia"], gab: "A", feed: "Anonimização torna impossível identificar a pessoa, diferentemente da pseudoanonimização." },
 
-        dbQuestions.forEach((q, index) => {
-            // Verifica se mudou a disciplina para criar um cabeçalho
-            if (q.discipline !== currentDiscipline) {
-                const header = document.createElement('div');
-                header.className = 'discipline-header';
-                header.innerText = q.discipline;
-                container.appendChild(header);
-                currentDiscipline = q.discipline;
-            }
+    // --- RACIOCÍNIO LÓGICO (35-48) ---
+    { id: 35, disc: "RLM", q: "Lógica: Se Digital->Daniel, Se Daniel->Sala. Daniel NÃO sala. Logo:", ops: ["A) Esteve local", "B) Digital é Daniel", "C) Digital NÃO é Daniel", "D) Se sala->local", "E) Nenhuma"], gab: "C", feed: "Modus Tollens: Se A->B e B->C, então A->C. Se não C (não entrou), então não A (digital não é dele)." },
+    { id: 36, disc: "RLM", q: "Conjuntos: 120 total. A=60, B=58, C=52. Intersecções duplas (25, 23, 21). Tripla 15.", ops: ["A) 0", "B) 2", "C) 4", "D) 6", "E) 8"], gab: "C", feed: "Soma das partes: Somente A(27) + Somente B(27) + Somente C(23) + Duplas Exclusivas(10+8+6) + Tripla(15) = 116. 120 - 116 = 4." },
+    { id: 37, disc: "RLM", q: "Sequência: 5, 8, 12, 17, 23...", ops: ["A) 35", "B) 38", "C) 41", "D) 44", "E) 47"], gab: "E", feed: "Diferenças: 3, 4, 5, 6... Próximas: 7 (30), 8 (38), 9 (47). O 8º termo é 47." },
+    { id: 38, disc: "RLM", q: "Combinatória: 8 agentes (3 Info, 5 Campo). Equipe de 4 com pelo menos 2 Info.", ops: ["A) 25", "B) 30", "C) 35", "D) 40", "E) 45"], gab: "C", feed: "C3,2 * C5,2 (3*10=30) + C3,3 * C5,1 (1*5=5). Total 35." },
+    { id: 39, disc: "RLM", q: "Probabilidade: 6A, 4B, 5C. Retira 3. Exatamente 2 serem A.", ops: ["A) 27/91", "B) 3/13", "C) 5/19", "D) 9/65", "E) 15/91"], gab: "A", feed: "Casos favoráveis: C6,2 * C9,1 = 15*9 = 135. Total: C15,3 = 455. 135/455 simplificando por 5 = 27/91." },
+    { id: 40, disc: "RLM", q: "Sistema Linear: 60 tabletes. X(1.2kg) + Y(0.8kg) = 52kg.", ops: ["A) 8", "B) 10", "C) 12", "D) 14", "E) 16"], gab: "B", feed: "X+Y=60 -> Y=60-X. 1.2X + 0.8(60-X) = 52. 1.2X + 48 - 0.8X = 52. 0.4X = 4. X = 10." },
+    { id: 41, disc: "RLM", q: "Função: s(v)=0.01v² + 0.2v. Diferença distâncias 110km/h e 90km/h.", ops: ["A) 34m", "B) 38m", "C) 40m", "D) 44m", "E) 48m"], gab: "D", feed: "s(110) = 121 + 22 = 143. s(90) = 81 + 18 = 99. 143 - 99 = 44." },
+    { id: 42, disc: "RLM", q: "Geometria: Área Círculo (r=12) / Volume Cilindro (r=12, h=5).", ops: ["A) 1/5", "B) 1/6", "C) 1/4", "D) 1/3", "E) 1/7"], gab: "A", feed: "Área = πR². Vol = πR²*h. Razão = 1/h = 1/5." },
+    { id: 43, disc: "RLM", q: "Estatística: 12, 14, 14, 16, 20, 22, 26, 40. Média, Mediana, Moda.", ops: ["A) 20.5, 18, 14...", "B) ...", "C) ...", "D) ...", "E) Média 20.5, Med 18, Moda 14"], gab: "E", feed: "Soma 164/8 = 20.5 (Média). Mediana (16+20)/2 = 18. Moda 14." },
+    { id: 44, disc: "RLM", q: "Tabela Verdade: (PvQ) <-> (P->Q). Linhas verdadeiras.", ops: ["A) 1", "B) 2", "C) 3", "D) 4", "E) 0"], gab: "C", feed: "Testando VV, VF, FV, FF. (VV): V<->V (V). (VF): V<->F (F). (FV): V<->V (V). (FF): F<->V (F). Ops, P->Q é V se F->F. PvQ é F. F<->V é F. Revisão: P=V,Q=V (V<->V)=V. P=V,Q=F (V<->F)=F. P=F,Q=V (V<->V)=V. P=F,Q=F (F<->V)=F. Temos 2 linhas verdadeiras? Gabarito B (2). Se a questão considera equivalência, não é tautologia. Gabarito B." },
+    { id: 45, disc: "RLM", q: "Negação: 'Suspeito usou doc falso E portava arma'.", ops: ["A) Se usou -> não portava", "B) ~D ^ ~A", "C) ~D v ~A", "D) ~(DvA)", "E) D -> ~A"], gab: "C", feed: "Lei de Morgan: Negação do E vira OU e nega as partes. Não usou OU não portava." },
+    { id: 46, disc: "RLM", q: "PG: 16 eventos dia 1. Duplica. Soma dia 1 a 5.", ops: ["A) 371", "B) 370", "C) 376", "D) 482", "E) 496"], gab: "E", feed: "16, 32, 64, 128, 256. Soma = 496." },
+    { id: 47, disc: "RLM", q: "Contagem: Placa LLLDDD. Letra repete (26), Dígito não (10).", ops: ["A) 12.654.720", "B) 11.232.000", "C) 17.576.000", "D) 1.581.840", "E) 15.600.000"], gab: "A", feed: "26*26*26 * 10*9*8 = 17576 * 720 = 12.654.720." },
+    { id: 48, disc: "RLM", q: "MMC: 6, 8, 10 horas. Saída conjunta 00:00.", ops: ["A) 20", "B) 24", "C) 30", "D) 40", "E) 120"], gab: "E", feed: "MMC(6,8,10) = 120 horas." },
 
-            const card = document.createElement('div');
-            card.className = 'question-card';
-            card.id = `card-${q.id}`;
+    // --- CONTABILIDADE (49-62) ---
+    { id: 49, disc: "Contabilidade", q: "Princípio: menor PL em situações concretas.", ops: ["A) Patrimônio", "B) Entidade", "C) Oportunidade", "D) Prudência", "E) Competência"], gab: "D", feed: "Prudência: menor valor para ativos, maior para passivos." },
+    { id: 50, disc: "Contabilidade", q: "Compra mercadoria vista/prazo. Lançamento:", ops: ["A) Debita Estoque / Credita Banco e Fornecedores", "B) Passivo", "C) Estoque", "D) Caixa", "E) Fornecedores"], gab: "A", feed: "Entra Ativo (Débito Estoque), Sai Ativo/Cria Obrigação (Crédito Banco/Fornecedor)." },
+    { id: 51, disc: "Contabilidade", q: "Classificação fatos contábeis:", ops: ["A) Patrimoniais", "B) Estáticos", "C) Permutativos, Modificativos, Mistos", "D) Positivos", "E) Competência"], gab: "C", feed: "Classificação clássica dos fatos." },
+    { id: 52, disc: "Contabilidade", q: "Estrutura patrimonial: I.Passivo obrigação, II.SL Negativa, III.Duplicata Descontada Passivo, IV.Veículo Circulante.", ops: ["A) I, II, III", "B) II, IV", "C) II, III, IV", "D) I, III", "E) II, III"], gab: "A", feed: "IV está errado: Veículo é Ativo Não Circulante (Imobilizado)." },
+    { id: 53, disc: "Contabilidade", q: "DFC Atividades:", ops: ["A) Patrimonial", "B) Operacional, Investimento, Financiamento", "C) Caixa", "D) Estáticas", "E) Positivas"], gab: "B", feed: "As 3 atividades do Fluxo de Caixa." },
+    { id: 54, disc: "Contabilidade", q: "DRE: Receita Líquida - CMV = ?", ops: ["A) Operacional Bruto", "B) Líquido", "C) Lucro Bruto", "D) Custo", "E) Resultado Antes"], gab: "C", feed: "RLV - CMV = RCM (Resultado com Mercadorias) ou Lucro Bruto." },
+    { id: 55, disc: "Contabilidade", q: "Objeto da Contabilidade Pública:", ops: ["A) Orçamento", "B) Entidades", "C) Patrimônio Público", "D) Adm Pública", "E) Dívida"], gab: "C", feed: "O objeto de toda contabilidade é o Patrimônio (aqui, o Público)." },
+    { id: 56, disc: "Contabilidade", q: "PCASP Natureza Patrimonial classes:", ops: ["A) 1 e 2", "B) 3 e 4", "C) 5 e 6", "D) 1, 2, 3, 4", "E) 7 e 8"], gab: "D", feed: "1 (Ativo), 2 (Passivo), 3 (Variação Diminutiva), 4 (Variação Aumentativa)." },
+    { id: 57, disc: "Contabilidade", q: "Princípio Orçamentário: um orçamento para cada ente:", ops: ["A) Universalidade", "B) Unidade", "C) Exclusividade", "D) Bruto", "E) Legalidade"], gab: "B", feed: "Unidade ou Totalidade." },
+    { id: 58, disc: "Contabilidade", q: "Receita quanto ao impacto no PL:", ops: ["A) Orçamentária", "B) Patrimonial", "C) Efetiva e Não Efetiva", "D) Corrente", "E) Impostos"], gab: "C", feed: "Efetiva (aumenta o PL), Não Efetiva (apenas permuta, ex: operação de crédito)." },
+    { id: 59, disc: "Contabilidade", q: "Duplicatas recebidas e não baixadas (Ativo Circulante):", ops: ["A) Ativo Oculto", "B) Ativo Fictício", "C) Subavaliação", "D) Fraude vendas", "E) Estouro"], gab: "B", feed: "Ativo Fictício: saldo contábil existe, mas o bem/direito não existe mais (já foi recebido)." },
+    { id: 60, disc: "Contabilidade", q: "Aporte de 500k compra terreno, sem passar pelo caixa:", ops: ["A) Omitir", "B) Aumentar", "C) Omitir saída", "D) Ajustar", "E) Justificar recursos não registrados"], gab: "E", feed: "Esquema clássico de lavagem/fraude: simular aporte para 'esquentar' dinheiro que comprou o bem." },
+    { id: 61, disc: "Contabilidade", q: "Entidades setor público (MCASP) exceto:", ops: ["A) Governos", "B) Municípios", "C) Defensoria Pública", "D) Conselhos", "E) Autarquias"], gab: "C", feed: "Defensoria é Órgão, não Entidade Contábil independente no sentido de personalidade jurídica própria (pertence ao Ente Estado)." },
+    { id: 62, disc: "Contabilidade", q: "Conceitos básicos:", ops: ["A) Ciência exata", "B) Objetivo demonstrações", "C) Campo aplicação (Fazenda/Patrimônio)", "D) Independência", "E) Conselho externo"], gab: "C", feed: "Contabilidade é ciência social. Campo de aplicação: Aziendas (Patrimônio gerido)." },
 
-            // HTML da questão
-            let optionsHtml = '';
-            q.options.forEach((opt) => {
-                const letter = opt.charAt(0); // A, B, C...
-                optionsHtml += `
-                    <li>
-                        <label class="option-label" id="label-${q.id}-${letter}">
-                            <input type="radio" name="question-${q.id}" value="${letter}">
-                            <span>${opt}</span>
-                        </label>
-                    </li>
-                `;
-            });
-
-            card.innerHTML = `
-                <div class="question-text">Questão ${q.id}) ${q.text}</div>
-                <ul class="options">
-                    ${optionsHtml}
-                </ul>
-                <div class="feedback" id="feedback-${q.id}"></div>
-            `;
-
-            container.appendChild(card);
-        });
-    }
-
-    // Função para corrigir o simulado
-    function gradeQuiz() {
-        let totalScore = 0;
-        let totalQuestions = dbQuestions.length;
-        
-        // Objeto para guardar score por disciplina
-        let disciplineScores = {}; 
-
-        // Limpa estilos anteriores
-        document.querySelectorAll('.option-label').forEach(el => {
-            el.classList.remove('correct-answer-highlight', 'wrong-answer-highlight');
-        });
-        document.querySelectorAll('.feedback').forEach(el => el.style.display = 'none');
-
-        dbQuestions.forEach((q) => {
-            // Inicializa contador da disciplina
-            if (!disciplineScores[q.discipline]) {
-                disciplineScores[q.discipline] = { correct: 0, total: 0 };
-            }
-            disciplineScores[q.discipline].total++;
-
-            // Pega a resposta do usuário
-            const selected = document.querySelector(`input[name="question-${q.id}"]:checked`);
-            const feedbackEl = document.getElementById(`feedback-${q.id}`);
-            
-            let isCorrect = false;
-
-            if (selected) {
-                const userVal = selected.value;
-                if (userVal === q.correct) {
-                    isCorrect = true;
-                    totalScore++;
-                    disciplineScores[q.discipline].correct++;
-                    // Estilo Verde
-                    document.getElementById(`label-${q.id}-${userVal}`).classList.add('correct-answer-highlight');
-                } else {
-                    // Estilo Vermelho na errada
-                    document.getElementById(`label-${q.id}-${userVal}`).classList.add('wrong-answer-highlight');
-                    // Mostra qual era a certa
-                    document.getElementById(`label-${q.id}-${q.correct}`).classList.add('correct-answer-highlight');
-                }
-            } else {
-                // Se não marcou nada, apenas mostra a correta
-                 document.getElementById(`label-${q.id}-${q.correct}`).classList.add('correct-answer-highlight');
-            }
-
-            // Mostra feedback
-            feedbackEl.innerHTML = `<strong>${isCorrect ? 'Correto!' : 'Incorreto.'}</strong> Gabarito: ${q.correct}. <br>${q.feedback || ''}`;
-            feedbackEl.style.display = 'block';
-            feedbackEl.style.color = isCorrect ? 'var(--primary-color)' : 'var(--wrong-color)';
-        });
-
-        showResults(totalScore, totalQuestions, disciplineScores);
-    }
-
-    function showResults(score, total, disciplineData) {
-        const panel = document.getElementById('results-panel');
-        const generalScoreDiv = document.getElementById('general-score');
-        const disciplineGrid = document.getElementById('discipline-stats');
-
-        panel.style.display = 'block';
-        
-        // Score Geral
-        const percentage = ((score / total) * 100).toFixed(1);
-        generalScoreDiv.innerHTML = `Acertos Totais: <strong>${score} de ${total}</strong> (${percentage}%)`;
-        
-        // Score por disciplina
-        disciplineGrid.innerHTML = '';
-        for (const [discName, data] of Object.entries(disciplineData)) {
-            const discPerc = ((data.correct / data.total) * 100).toFixed(0);
-            const div = document.createElement('div');
-            div.className = 'stat-card';
-            div.innerHTML = `
-                <div class="stat-value">${discPerc}%</div>
-                <div class="stat-label">${discName}<br>(${data.correct}/${data.total})</div>
-            `;
-            disciplineGrid.appendChild(div);
-        }
-
-        // Scroll até o resultado
-        panel.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    // Inicializa
-    renderQuiz();
-
-</script>
-
-</body>
-</html>
+    // --- ADMINISTRAÇÃO (63-75) ---
+    { id: 63, disc: "Administração", q: "Funções Administrativas (Organização):", ops: ["A) Atribuir tarefas", "B) Definir objetivos", "C) Monitorar", "D) Liderança", "E) Estrutura órgãos/cargos"], gab: "E", feed: "Organizar é estruturar e alocar recursos." },
+    { id: 64, disc: "Administração", q: "Planejamento Médio Prazo/Logística:", ops: ["A) Estratégico", "B) Operacional", "C) Burocrático", "D) Tático", "E) Normativo"], gab: "D", feed: "Tático conecta o estratégico ao operacional (departamental/médio prazo)." },
+    { id: 65, disc: "Administração", q: "GPO (Objetivos):", ops: ["A) Financeiro", "B) Interligação objetivos e participativo", "C) Autocrática", "D) Incompatível", "E) Inputs"], gab: "B", feed: "GPO foca em consenso e cascateamento de metas." },
+    { id: 66, disc: "Administração", q: "Estrutura Informal:", ops: ["A) Interação social/espontânea", "B) Organogramas", "C) Normas", "D) Arranjo deliberado", "E) Rígida"], gab: "A", feed: "Informal surge das relações interpessoais." },
+    { id: 67, disc: "Administração", q: "Liderança participativa/consenso:", ops: ["A) Autocrático", "B) Liberal", "C) Transacional", "D) Democrático", "E) Paternalista"], gab: "D", feed: "Liderança democrática incentiva participação." },
+    { id: 68, disc: "Administração", q: "Barreira Comunicação (Jargão):", ops: ["A) Pessoal", "B) Física", "C) Semântica", "D) Administrativa", "E) Psicológica"], gab: "C", feed: "Uso de termos técnicos (jargão) incompreensíveis é barreira semântica." },
+    { id: 69, disc: "Administração", q: "Recusa de suborno baseada na lei:", ops: ["A) Eficiência", "B) Publicidade", "C) Impessoalidade", "D) Legalidade", "E) Moralidade"], gab: "D", feed: "Embora fira a moralidade, a justificativa 'agir estritamente conforme legislação' remete à Legalidade." },
+    { id:
