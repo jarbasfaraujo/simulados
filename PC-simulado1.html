@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulado PC-ES - Oficial Investigador</title>
+    <style>
+        :root {
+            --primary-color: #003366; /* Azul Polícia */
+            --accent-color: #d4af37; /* Dourado/Insígnia */
+            --bg-color: #f4f4f9;
+            --text-color: #333;
+            --correct-color: #28a745;
+            --wrong-color: #dc3545;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+        }
+
+        h1 { color: var(--primary-color); margin: 0; }
+        h2 { color: var(--text-color); font-size: 1.2rem; margin-top: 5px; }
+
+        .discipline-header {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 10px 15px;
+            margin-top: 40px;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .question-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+        }
+
+        .options { list-style-type: none; padding: 0; }
+        .options li { margin-bottom: 10px; }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid transparent;
+        }
+
+        .option-label:hover { background-color: #f0f0f0; }
+        .option-label input { margin-right: 10px; margin-top: 5px; }
+
+        /* Estilos de Feedback */
+        .feedback {
+            display: none;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            background-color: #e9ecef;
+        }
+        
+        .correct-answer-highlight {
+            border: 1px solid var(--correct-color);
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--correct-color);
+            font-weight: bold;
+        }
+
+        .wrong-answer-highlight {
+            border: 1px solid var(--wrong-color);
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--wrong-color);
+        }
+
+        /* Botão */
+        .btn-submit {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 30px;
+        }
+
+        .btn-submit:hover { background-color: #002244; }
+
+        /* Painel de Resultados */
+        #results-panel {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            background-color: #eef2f5;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .stat-value { font-size: 1.5rem; font-weight: bold; color: var(--primary-color); }
+        .stat-label { font-size: 0.9rem; color: #666; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Simulado PC-ES</h1>
+        <h2>Oficial Investigador - Pós-Edital</h2>
+        <p>Preencha todas as questões e clique em "Corrigir Simulado" ao final.</p>
+    </header>
+
+    <form id="quiz-form">
+        <div id="questions-container">
+            </div>
+
+        <button type="button" class="btn-submit" onclick="gradeQuiz()">Corrigir Simulado</button>
+    </form>
+
+    <div id="results-panel">
+        <h2>Resultado Final</h2>
+        <div id="general-score" style="text-align: center; font-size: 1.2rem; margin-bottom: 20px;"></div>
+        
+        <h3>Desempenho por Disciplina</h3>
+        <div class="stats-grid" id="discipline-stats">
+            </div>
+    </div>
+</div>
+
+<script>
+    /* BANCO DE DADOS DAS QUESTÕES
+       OBS: Como o PDF não tinha gabarito, defini 'correct' provisoriamente.
+       Você deve editar o campo 'correct' com a letra certa (A, B, C, D, E).
+    */
+    const dbQuestions = [
+        // --- LÍNGUA PORTUGUESA ---
+        {
+            id: 1,
+            discipline: "Língua Portuguesa",
+            text: 'Leia o trecho: "Generalizando-se a corrupção, restabelece-se a Justiça." O trecho transmite, principalmente, a ideia de:',
+            options: [
+                "A) defesa de que a corrupção pode funcionar como um mecanismo de equilíbrio social ao atingir todos de forma igual.",
+                "B) ironia diante de uma sociedade em que a corrupção se torna tão comum que a justiça se dissolve.",
+                "C) reflexão moral sobre a relativização dos valores éticos em contextos de desigualdade social.",
+                "D) denúncia de que a impunidade corrói a confiança pública e enfraquece o poder das leis.",
+                "E) provocação filosófica que sugere ser impossível alcançar justiça verdadeira em um mundo de imperfeições humanas."
+            ],
+            correct: "B", // GABARITO PROVISÓRIO - Ajustar
+            feedback: "A frase sugere uma ironia sobre a banalização da corrupção."
+        },
+        // --- NOÇÕES DE INFORMÁTICA ---
+        {
+            id: 18,
+            discipline: "Noções de Informática",
+            text: 'No contexto da computação, os sistemas são compostos por elementos físicos e lógicos que trabalham em conjunto. Assinale a alternativa que descreve corretamente um desses conceitos.',
+            options: [
+                "A) Hardware refere-se ao conjunto de programas e instruções lógicas que controlam o funcionamento do computador.",
+                "B) Software de Sistema é a categoria que engloba programas de uso final, como editores de texto.",
+                "C) Os periféricos de entrada, como o monitor e a impressora, são responsáveis por exibir os resultados.",
+                "D) Software Aplicativo inclui programas essenciais como os drivers de dispositivo.",
+                "E) Software Utilitário consiste em programas projetados para realizar tarefas de manutenção, otimização ou segurança, como antivírus."
+            ],
+            correct: "E", // GABARITO PROVISÓRIO - Ajustar
+            feedback: "Utilitários focam na manutenção e segurança do sistema (ex: antivírus, backup)."
+        },
+        // --- RACIOCÍNIO LÓGICO ---
+        {
+            id: 35,
+            discipline: "Raciocínio Lógico e Matemática",
+            text: 'Durante uma investigação... 1- "Se a digital encontrada pertence a Daniel, então Daniel esteve no local do crime." 2- "Se Daniel esteve no local do crime, então ele teve acesso à sala restrita." Constatou-se que Daniel NÃO teve acesso à sala restrita. Logo:',
+            options: [
+                "A) Daniel esteve no local do crime.",
+                "B) a digital encontrada pertence a Daniel.",
+                "C) a digital encontrada não pertence a Daniel.",
+                "D) se Daniel teve acesso à sala restrita, então esteve no local do crime.",
+                "E) não é possível chegar a nenhuma conclusão lógica."
+            ],
+            correct: "C", // Modus Tollens
+            feedback: "Pelo Modus Tollens: Se A -> B e B -> C, então A -> C. Se não C (não teve acesso), então não A (digital não é dele)."
+        },
+        // --- CONTABILIDADE ---
+        {
+            id: 49,
+            discipline: "Noções de Contabilidade",
+            text: '"No conjunto dos princípios contábeis, há um princípio que determina que em situações concretas deve prevalecer o reconhecimento de um patrimônio líquido menor em detrimento de um maior". Trata-se do princípio:',
+            options: [
+                "A) do patrimônio.",
+                "B) da entidade.",
+                "C) da oportunidade.",
+                "D) da prudência.",
+                "E) da competência."
+            ],
+            correct: "D", // GABARITO PROVISÓRIO - Ajustar
+            feedback: "O Princípio da Prudência pressupõe o emprego de certo grau de precaução no exercício dos julgamentos necessários às estimativas em certas condições de incerteza."
+        },
+        // --- ADMINISTRAÇÃO ---
+        {
+            id: 63,
+            discipline: "Noções de Administração",
+            text: 'Considerando o ciclo das funções administrativas no contexto da gestão pública, assinale a alternativa que apresenta a correta correlação entre a função e uma de suas atividades-chave.',
+            options: [
+                "A) Planejamento: consiste em atribuir tarefas, delegar autoridade e coordenar recursos.",
+                "B) Organização: envolve a definição de objetivos e formulação de estratégias.",
+                "C) Direção: implica monitorar o desempenho, comparar resultados e aplicar ações corretivas.",
+                "D) Controle: refere-se à liderança, motivação e comunicação.",
+                "E) Organização: determina a estrutura de órgãos e cargos, o desenho das unidades administrativas e o arranjo dos recursos."
+            ],
+            correct: "E", // GABARITO PROVISÓRIO - Ajustar
+            feedback: "Organização refere-se à estruturação, divisão de trabalho e alocação de recursos."
+        },
+        // --- DIREITO ---
+        {
+            id: 76,
+            discipline: "Noções de Direito",
+            text: 'Assinale a alternativa correta quanto ao conceito e às características das constituições, no contexto da CF/88.',
+            options: [
+                "A) A Constituição é um conjunto de normas apenas políticas, sem caráter jurídico vinculante.",
+                "B) As constituições são sempre rígidas, pois não admitem alteração posterior à sua promulgação.",
+                "C) A Constituição de 1988 é escrita, promulgada, rígida, analítica e dogmática.",
+                "D) A Constituição sem escrita, como a inglesa, é considerada codificada e analítica.",
+                "E) Constituições outorgadas são aquelas elaboradas com ampla participação popular."
+            ],
+            correct: "C", // GABARITO PROVISÓRIO - Ajustar
+            feedback: "A CF/88 é classificada como escrita, promulgada (democrática), rígida (difícil alteração), analítica (extensa) e dogmática."
+        }
+    ];
+
+    // Função para renderizar as questões na tela
+    function renderQuiz() {
+        const container = document.getElementById('questions-container');
+        let currentDiscipline = "";
+
+        dbQuestions.forEach((q, index) => {
+            // Verifica se mudou a disciplina para criar um cabeçalho
+            if (q.discipline !== currentDiscipline) {
+                const header = document.createElement('div');
+                header.className = 'discipline-header';
+                header.innerText = q.discipline;
+                container.appendChild(header);
+                currentDiscipline = q.discipline;
+            }
+
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.id = `card-${q.id}`;
+
+            // HTML da questão
+            let optionsHtml = '';
+            q.options.forEach((opt) => {
+                const letter = opt.charAt(0); // A, B, C...
+                optionsHtml += `
+                    <li>
+                        <label class="option-label" id="label-${q.id}-${letter}">
+                            <input type="radio" name="question-${q.id}" value="${letter}">
+                            <span>${opt}</span>
+                        </label>
+                    </li>
+                `;
+            });
+
+            card.innerHTML = `
+                <div class="question-text">Questão ${q.id}) ${q.text}</div>
+                <ul class="options">
+                    ${optionsHtml}
+                </ul>
+                <div class="feedback" id="feedback-${q.id}"></div>
+            `;
+
+            container.appendChild(card);
+        });
+    }
+
+    // Função para corrigir o simulado
+    function gradeQuiz() {
+        let totalScore = 0;
+        let totalQuestions = dbQuestions.length;
+        
+        // Objeto para guardar score por disciplina
+        let disciplineScores = {}; 
+
+        // Limpa estilos anteriores
+        document.querySelectorAll('.option-label').forEach(el => {
+            el.classList.remove('correct-answer-highlight', 'wrong-answer-highlight');
+        });
+        document.querySelectorAll('.feedback').forEach(el => el.style.display = 'none');
+
+        dbQuestions.forEach((q) => {
+            // Inicializa contador da disciplina
+            if (!disciplineScores[q.discipline]) {
+                disciplineScores[q.discipline] = { correct: 0, total: 0 };
+            }
+            disciplineScores[q.discipline].total++;
+
+            // Pega a resposta do usuário
+            const selected = document.querySelector(`input[name="question-${q.id}"]:checked`);
+            const feedbackEl = document.getElementById(`feedback-${q.id}`);
+            
+            let isCorrect = false;
+
+            if (selected) {
+                const userVal = selected.value;
+                if (userVal === q.correct) {
+                    isCorrect = true;
+                    totalScore++;
+                    disciplineScores[q.discipline].correct++;
+                    // Estilo Verde
+                    document.getElementById(`label-${q.id}-${userVal}`).classList.add('correct-answer-highlight');
+                } else {
+                    // Estilo Vermelho na errada
+                    document.getElementById(`label-${q.id}-${userVal}`).classList.add('wrong-answer-highlight');
+                    // Mostra qual era a certa
+                    document.getElementById(`label-${q.id}-${q.correct}`).classList.add('correct-answer-highlight');
+                }
+            } else {
+                // Se não marcou nada, apenas mostra a correta
+                 document.getElementById(`label-${q.id}-${q.correct}`).classList.add('correct-answer-highlight');
+            }
+
+            // Mostra feedback
+            feedbackEl.innerHTML = `<strong>${isCorrect ? 'Correto!' : 'Incorreto.'}</strong> Gabarito: ${q.correct}. <br>${q.feedback || ''}`;
+            feedbackEl.style.display = 'block';
+            feedbackEl.style.color = isCorrect ? 'var(--primary-color)' : 'var(--wrong-color)';
+        });
+
+        showResults(totalScore, totalQuestions, disciplineScores);
+    }
+
+    function showResults(score, total, disciplineData) {
+        const panel = document.getElementById('results-panel');
+        const generalScoreDiv = document.getElementById('general-score');
+        const disciplineGrid = document.getElementById('discipline-stats');
+
+        panel.style.display = 'block';
+        
+        // Score Geral
+        const percentage = ((score / total) * 100).toFixed(1);
+        generalScoreDiv.innerHTML = `Acertos Totais: <strong>${score} de ${total}</strong> (${percentage}%)`;
+        
+        // Score por disciplina
+        disciplineGrid.innerHTML = '';
+        for (const [discName, data] of Object.entries(disciplineData)) {
+            const discPerc = ((data.correct / data.total) * 100).toFixed(0);
+            const div = document.createElement('div');
+            div.className = 'stat-card';
+            div.innerHTML = `
+                <div class="stat-value">${discPerc}%</div>
+                <div class="stat-label">${discName}<br>(${data.correct}/${data.total})</div>
+            `;
+            disciplineGrid.appendChild(div);
+        }
+
+        // Scroll até o resultado
+        panel.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Inicializa
+    renderQuiz();
+
+</script>
+
+</body>
+</html>
